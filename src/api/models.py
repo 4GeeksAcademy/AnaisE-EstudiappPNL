@@ -7,72 +7,46 @@ db = SQLAlchemy()
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(nullable=False)
-    #is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    user_name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    resultado_test: Mapped[str] = mapped_column(String(50), unique=False, nullable=True)
-    nombre: Mapped[str] = mapped_column(String(30), unique=False, nullable=True) 
-    apellido: Mapped[str] = mapped_column(String(30), unique=False, nullable=True)
+    password: Mapped[str] = mapped_column(String(300),nullable=False)
+    username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
+    test_result: Mapped[str] = mapped_column(String(50), nullable=True)
     rol: Mapped[str] = mapped_column(String(10), unique=False, nullable=True)
+
+    test_result: Mapped["TestResult"]= db.relationship(back_populates="user",cascade="all,delete-orphan")
 
     def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
-            "resultado_test": self.resultado_test,
-            "user_name": self.user_name,
-            "nombre": self.nombre,
-            "apellido": self.apellido,
+            "test_result": self.test_result,
+            "username": self.username,
             "rol": self.rol,
+
         }
     
-class Test(db.Model):
+    def __repr__(self):
+        return self.username
+    
+
+class TestResult(db.Model):
+    __tablename__ = 'test_results'
+
     id: Mapped[int] = mapped_column(primary_key=True)
-    pregunta: Mapped[str] = mapped_column(String(500))
-    respuesta_1: Mapped[str] = mapped_column(String(500))
-    respuesta_2: Mapped[str] = mapped_column(String(500))
-    respuesta_3: Mapped[str] = mapped_column(String(500))
-    respuesta_1_canal: Mapped[str]= mapped_column(String(30))
-    respuesta_2_canal: Mapped[str]= mapped_column(String(30))
-    respuesta_3_canal: Mapped[str]= mapped_column(String(30))
+    user_id: Mapped[int] = mapped_column(db.ForeignKey('users.id'), nullable=False)
+    #answers = mapped_column(JSON)  # Almacena las respuestas del usuario como un diccionario JSON
+    dominant_channel: Mapped[str]= mapped_column(String(1), nullable=False) # 'V', 'A' o 'K'
+    
+    user: Mapped ["User"] = db.relationship(back_populates="test_result")
 
     def serialize(self):
         return {
             "id": self.id,
-            "pregunta": self.pregunta,
-            "respuesta_1": self.respuesta_1,
-            "respuesta_2": self.respuesta_2,
-            "respuesta_3": self.respuesta_3,
-            "respuesta_1_canal": self.respuesta_1_canal,
-            "respuesta_2_canal": self.respuesta_2_canal,
-            "respuesta_3_canal": self.respuesta_3_canal,
+            "user_id": self.user_id,
+            "answers": self.answers,
+            "dominant_channel": self.dominant_channel,
         }
+
+    def __repr__(self):
+        return f'<TestResult for User {self.user_id} - Channel: {self.dominant_channel}>' 
+
     
-
-class Canales(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    visual: Mapped[str] = mapped_column(String(30))
-    auditivo: Mapped[str] = mapped_column(String(30))
-    kinestesico: Mapped[str] = mapped_column(String(30))
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "visual": self.visual,
-            "auditivo": self.auditivo,
-            "kinestesico": self.kinestesico,
-        }
-    
-class Recomendacion(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    visual: Mapped[str] = mapped_column(String(500))
-    auditivo: Mapped[str] = mapped_column(String(500))
-    kinestesico: Mapped[str] = mapped_column(String(500))
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "visual": self.visual,
-            "auditivo": self.auditivo,
-            "kinestesico": self.kinestesico,
-            }
