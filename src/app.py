@@ -1,72 +1,81 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-import os
-from flask import Flask, request, jsonify, url_for, send_from_directory
-from flask_migrate import Migrate
-from flask_swagger import swagger
-from api.utils import APIException, generate_sitemap
-from api.models import db
-from api.routes import api
-from api.admin import setup_admin
-from api.commands import setup_commands
+from flask import Flask, request, jsonify, url_for, Blueprint
+from api.models import db, User # Asumo que otros modelos (Question, TestResult, UserAnswer) también están aquí
+from api.utils import generate_sitemap, APIException
+from flask_cors import CORS
 
-# from models import Person
+# --- Importaciones FALTANTES para JWT ---
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+# --- FIN Importaciones FALTANTES ---
 
-ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
-static_file_dir = os.path.join(os.path.dirname(
-    os.path.realpath(__file__)), '../public/')
-app = Flask(__name__)
-app.url_map.strict_slashes = False
+api = Blueprint('api', __name__)
 
-# database condiguration
-db_url = os.getenv("DATABASE_URL")
-if db_url is not None:
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace(
-        "postgres://", "postgresql://")
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
-
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-MIGRATE = Migrate(app, db, compare_type=True)
-db.init_app(app)
-
-# add the admin
-setup_admin(app)
-
-# add the admin
-setup_commands(app)
-
-# Add all endpoints form the API with a "api" prefix
-app.register_blueprint(api, url_prefix='/api')
-
-# Handle/serialize errors like a JSON object
+# Allow CORS requests to this API
+CORS(api)
 
 
-@app.errorhandler(APIException)
-def handle_invalid_usage(error):
-    return jsonify(error.to_dict()), error.status_code
+@api.route('/hello', methods=['POST', 'GET'])
+def handle_hello():
+    response_body = {
+        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+    }
+    return jsonify(response_body), 200
 
-# generate sitemap with all your endpoints
+# --- Rutas corregidas para usar @api.route ---
 
+@api.route('/register', methods=['POST']) 
+def register_user():
+    email = request.json.get('email', None)
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
 
-@app.route('/')
-def sitemap():
-    if ENV == "development":
-        return generate_sitemap(app)
-    return send_from_directory(static_file_dir, 'index.html')
+    if not email or not username or not password:
+        return jsonify({"msg": "Email, username y password son requeridos"}), 400
 
-# any other endpoint will try to serve it like a static file
-@app.route('/<path:path>', methods=['GET'])
-def serve_any_other_file(path):
-    if not os.path.isfile(os.path.join(static_file_dir, path)):
-        path = 'index.html'
-    response = send_from_directory(static_file_dir, path)
-    response.cache_control.max_age = 0  # avoid cache memory
-    return response
+    # Verificar si el email ya existe
+    user_email_exists = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
+    if user_email_exists:
+        return jsonify({"msg": "El email ya está registrado"}), 409
 
+    # Verificar si el username ya existe
+    user_username_exists = db.session.execute(db.select(User).filter_by(username=username)).scalar_one_or_none()
+    if user_username_exists:
+        return jsonify({"msg": "El nombre de usuario ya está en uso"}), 409
 
-# this only runs if `$ python src/main.py` is executed
-if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 3001))
-    app.run(host='0.0.0.0', port=PORT, debug=True)
+    new_user = User(email=email, username=username)
+    new_user.set_password(password) # Usar el método del modelo para hashear la contraseña
+    new_user.rol = "student" # Asignar un rol por defecto
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"msg": "Usuario registrado exitosamente", "user_id": new_user.id}), 201
+
+@api.route('/login', methods=['POST']) # ¡CORREGIDO: @api.route!
+def login_user():
+    identifier = request.json.get('identifier', None)
+    password = request.json.get('password', None)
+
+    if not identifier or not password:
+        return jsonify({"msg": "Identificador y password son requeridos"}), 400
+
+    user = db.session.execute(db.select(User).filter((User.email == identifier) | (User.username == identifier))).scalar_one_or_none()
+
+    if user is None or not user.check_password(password):
+        return jsonify({"msg": "Email/Usuario o contraseña incorrectos"}), 401
+
+    access_token = create_access_token(identity=user.id)
+    return jsonify(access_token=access_token, user=user.serialize()), 200
+
+@api.route('/dashboard', methods=['GET']) # ¡CORREGIDO: @api.route!
+@jwt_required()
+def dashboard():
+    current_user_id = get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(id=current_user_id)).scalar_one_or_none()
+
+    if user is None:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    return jsonify({"msg": f"Bienvenido al dashboard, {user.username}!", "user_data": user.serialize()}), 200

@@ -79,7 +79,7 @@ class Question(db.Model):
         return f'<Question {self.order}: {self.question}>'
     
 
-    class UserAnswer(db.Model): 
+class UserAnswer(db.Model): 
     __tablename__ = 'user_answers'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
