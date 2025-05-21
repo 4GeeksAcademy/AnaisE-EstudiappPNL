@@ -49,6 +49,60 @@ class User(db.Model):
        
         return f'<User {self.username}>'
 
+class Question(db.Model): 
+    __tablename__ = 'questions'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    question: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
+    option_v: Mapped[str] = mapped_column(String(100), nullable=False)
+    option_a: Mapped[str] = mapped_column(String(120), nullable=False)
+    option_k: Mapped[str] = mapped_column(String(120), nullable=False)
+    order: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+
+    user_answers: Mapped[list["UserAnswer"]] = relationship(
+        back_populates="question",
+        lazy=True
+    )
+
+    def serialize(self):
+        
+        return {
+            "id": self.id,
+            "question": self.question,
+            "option_v": self.option_v, 
+            "option_a": self.option_a,
+            "option_k": self.option_k,
+            "order": self.order,
+        }
+
+    def __repr__(self):
+        return f'<Question {self.order}: {self.question}>'
+    
+
+    class UserAnswer(db.Model): 
+    __tablename__ = 'user_answers'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    test_result_id: Mapped[int] = mapped_column(Integer, ForeignKey('test_results.id'), nullable=False)
+    question_id: Mapped[int] = mapped_column(Integer, ForeignKey('questions.id'), nullable=False)
+    # Columna para guardar la opción seleccionada ('V', 'A' o 'K').
+    selected_option: Mapped[str] = mapped_column(String(1), nullable=False)
+    test_result: Mapped["TestResult"] = relationship(back_populates="user_answers")
+    question: Mapped["Question"] = relationship(back_populates="user_answers")
+
+    def serialize(self):
+       
+        return {
+            "id": self.id,
+            "test_result_id": self.test_result_id,
+            "question_id": self.question_id,
+            "selected_option": self.selected_option,
+            "question_text": self.question.question if self.question else None
+        }
+
+    def __repr__(self):
+        return f'<UserAnswer TestResult {self.test_result_id} Q:{self.question_id} Opt:{self.selected_option}>'
+
 
 class TestResult(db.Model):
     __tablename__ = 'test_results'
@@ -86,59 +140,9 @@ class TestResult(db.Model):
         return f'<TestResult for User {self.user_id} - Channel: {self.dominant_channel}>'
 
 
-class Question(db.Model): 
-    __tablename__ = 'questions'
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    question: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
-    option_v: Mapped[str] = mapped_column(String(100), nullable=False)
-    option_a: Mapped[str] = mapped_column(String(120), nullable=False)
-    option_k: Mapped[str] = mapped_column(String(120), nullable=False)
-    order: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
-
-    user_answers: Mapped[list["UserAnswer"]] = relationship(
-        back_populates="question",
-        lazy=True
-    )
-
-    def serialize(self):
-        
-        return {
-            "id": self.id,
-            "question": self.question,
-            "option_v": self.option_v, 
-            "option_a": self.option_a,
-            "option_k": self.option_k,
-            "order": self.order,
-        }
-
-    def __repr__(self):
-        return f'<Question {self.order}: {self.question}>'
 
 
-class UserAnswer(db.Model): 
-    __tablename__ = 'user_answers'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    test_result_id: Mapped[int] = mapped_column(Integer, ForeignKey('test_results.id'), nullable=False)
-    question_id: Mapped[int] = mapped_column(Integer, ForeignKey('questions.id'), nullable=False)
-    # Columna para guardar la opción seleccionada ('V', 'A' o 'K').
-    selected_option: Mapped[str] = mapped_column(String(1), nullable=False)
-    test_result: Mapped["TestResult"] = relationship(back_populates="user_answers")
-    question: Mapped["Question"] = relationship(back_populates="user_answers")
-
-    def serialize(self):
-       
-        return {
-            "id": self.id,
-            "test_result_id": self.test_result_id,
-            "question_id": self.question_id,
-            "selected_option": self.selected_option,
-            "question_text": self.question.question if self.question else None
-        }
-
-    def __repr__(self):
-        return f'<UserAnswer TestResult {self.test_result_id} Q:{self.question_id} Opt:{self.selected_option}>'
 
 
 
