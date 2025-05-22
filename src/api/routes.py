@@ -21,7 +21,7 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@app.route('/register', methods=['POST'])
+@api.route('/register', methods=['POST'])
 def register_user():
     email = request.json.get('email', None)
     username = request.json.get('username', None)
@@ -49,7 +49,7 @@ def register_user():
 
     return jsonify({"msg": "Usuario registrado exitosamente", "user_id": new_user.id}), 201
 
-@app.route('/login', methods=['POST'])
+@api.route('/login', methods=['POST'])
 def login_user():
     # Puedes permitir login por email o username
     identifier = request.json.get('identifier', None) # Podría ser email o username
@@ -68,7 +68,7 @@ def login_user():
     access_token = create_access_token(identity=user.id)
     return jsonify(access_token=access_token, user=user.serialize()), 200
 
-@app.route('/dashboard', methods=['GET'])
+@api.route('/dashboard', methods=['GET'])
 @jwt_required() # Protege esta ruta, requiere un token JWT válido
 def dashboard():
     # Acceder a la identidad del usuario actual (el ID del usuario que está en el token)
