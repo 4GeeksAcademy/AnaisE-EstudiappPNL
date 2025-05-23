@@ -7,7 +7,7 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 
-api = Blueprint('api', __name__)  # CORREGIDO: __name, no _name
+api = Blueprint('api', __name__) # CORREGIDO: __name_
 CORS(api)  # Allow CORS requests to this API
 
 
@@ -17,20 +17,25 @@ def handle_hello():
         "message": "Hello! I'm a message that came from the backend"
     }), 200
 
+# RUTA DE REGISTRO  (FUNCIONANDO)
+
 @api.route('/register', methods=['POST'])
 def register_user():
     print("Headers:", dict(request.headers))
     print("Content-Type:", request.content_type)
     print("Body crudo:", request.data)
+    print("Headers:", dict(request.headers))
+    print("Content-Type:", request.content_type)
+    print("Body crudo:", request.data)
 
-    # Asegurar que viene JSON
+    # Asegurar que viene  JSON
     data = request.get_json()
     if not data:
         return jsonify({"msg": "No se recibió un JSON válido"}), 400
 
     # Extraer datos
     email = data.get('email')
-    username = data.get('username')
+    username = data.get('username') # Asegúrate de que en Postman envías 'username'
     password = data.get('password')
 
     if not email or not username or not password:
@@ -55,36 +60,61 @@ def register_user():
     return jsonify({"msg": "Usuario registrado exitosamente", "user_id": new_user.id}),201
 
 
-    
+    # RUTA LOGIN (FUNCIONANDO )
 
 @api.route('/login', methods=['POST'])
 def login_user():
-    identifier = request.json.get('identifier')
+    identified = request.json.get('identified')
     password = request.json.get('password')
 
-    if not identifier or not password:
+    if not identified or not password:
         return jsonify({"msg": "Identificador y password son requeridos"}), 400
 
     user = db.session.execute(
-        db.select(User).filter((User.email == identifier) | (User.username == identifier))
+        db.select(User).filter((User.email == identified) | (User.username == identified))
     ).scalar_one_or_none()
 
     if user is None or not user.check_password(password):
         return jsonify({"msg": "Email/Usuario o contraseña incorrectos"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    # Corregido: convertir user.id a string al crear el token
+    access_token = create_access_token(identity=str(user.id))
+    
     return jsonify(access_token=access_token, user=user.serialize()), 200
 
+
+# RUTA DASHBOARD (FUNCIONANDO )
 
 @api.route('/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
-    current_user_id = get_jwt_identity()
-    user = db.session.execute(db.select(User).filter_by(id=current_user_id)).scalar_one_or_none()
+    print("\n--- Entrando a la ruta /dashboard ---")
+    try:
+        print("Decorador @jwt_required() procesado. Intentando obtener identidad del JWT...")
+        
+        # Corregido: convertir la identidad de nuevo a int
+        current_user_id = int(get_jwt_identity())
+        
+        print(f"ID de usuario obtenido del JWT: {current_user_id}")
+        print(f"Tipo de ID de usuario: {type(current_user_id)}")
 
-    if user is None:
-        return jsonify({"msg": "Usuario no encontrado"}), 404
+        user = db.session.execute(
+            db.select(User).filter_by(id=current_user_id)
+        ).scalar_one_or_none()
 
-    return jsonify({
-        "msg": f"Bienvenido al dashboard, {user.username}!",
-        "user_data": user.serialize()}),  200
+        if user is None:
+            print(f"ERROR: Usuario con ID {current_user_id} no encontrado en la DB.")
+            return jsonify({"msg": "Usuario no encontrado"}), 404
+
+        print(f"Usuario encontrado en DB: {user.username} (ID: {user.id})")
+        return jsonify({
+            "msg": f"Bienvenido al dashboard, {user.username}!",
+            "user_data": user.serialize()
+        }), 200
+
+    except Exception as e:
+        print(f"ERROR INESPERADO en la ruta /dashboard: {e}")
+        return jsonify({
+            "msg": "Error interno del servidor al acceder al dashboard",
+            "details": str(e)
+            }),500

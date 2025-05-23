@@ -1,7 +1,8 @@
 
-import click
-from api.models import db, User
-
+import click,json,os
+from api.models import db, User,Question
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
 Flask commands are usefull to run cronjobs or tasks outside of the API but sill in integration 
@@ -31,4 +32,22 @@ def setup_commands(app):
 
     @app.cli.command("insert-test-data")
     def insert_test_data():
-        pass
+        with open(os.path.join(__location__, 'json/questions.json')) as f:
+            questions = json.load(f)
+            print(questions)
+
+            print("Creating questions")
+            for question in questions:
+                new_question = Question(
+                    question = question["question"],
+                    option_v = question["answers"][0],   
+                    option_a = question["answers"][1],   
+                    option_k = question["answers"][2],  
+                    order = question["order"]
+                )
+            
+                db.session.add(new_question)
+                db.session.commit()
+        
+
+        print("All questions created")

@@ -1,0 +1,47 @@
+[
+    {
+        "question": "¿Cuál de las siguientes actividades disfrutas más?",
+        "answers": [
+            "Ver películas",
+            "Escuchar música",
+            "Bailar con buena música"
+        ],
+        "order": 1
+    },
+    {
+        "question": "¿Qué programa de televisión prefieres?",
+        "answers": [
+            "Reportajes de descubrimientos y lugares",
+            "Noticias del mundo",
+            "Cómico y de entretenimiento"
+        ],
+        "order": 2
+    },
+    {
+        "question": "Cuando conversas con otra persona, tú:",
+        "answers": [
+            "La observas",
+            "La escuchas atentamente",
+            "Tiendes a tocarla"
+        ],
+        "order": 3
+    },
+    {
+        "question": "Si pudieras adquirir uno de los siguientes artículos, ¿cuál elegirías?",
+        "answers": [
+            "Un televisor",
+            "Un estéreo",
+            "Un jacuzzi"
+        ],
+        "order": 4
+    },
+    {
+        "question": " ¿Qué prefieres hacer un sábado por la tarde?",
+        "answers": [
+            "Ir al ciner",
+            "Ir a un concierto",
+            "Un jacuzzi"
+        ],
+        "order": 5
+    },
+]
