@@ -36,12 +36,183 @@
         "order": 4
     },
     {
-        "question": " ¿Qué prefieres hacer un sábado por la tarde?",
+        "question": "¿Qué prefieres hacer un sábado por la tarde?",
         "answers": [
             "Ir al ciner",
             "Ir a un concierto",
-            "Un jacuzzi"
+            "Quedarte en casa"
         ],
         "order": 5
     },
+    {
+        "question": "¿Qué tipo de exámenes se te facilitan más?",
+        "answers": [
+            "IExamen escrito",
+            "Examen oral",
+            "Examen de opción múltiple"
+        ],
+        "order": 6
+    },
+    {
+        "question": "¿Cómo te orientas más fácilmente?",
+        "answers": [
+            "Mediante el uso de un mapa",
+            "Pidiendo indicaciones",
+            "A través de la intuición"
+        ],
+        "order": 7
+    },
+    {
+        "question": "En tu tiempo de descanso, prefieres:",
+        "answers": [
+            "Caminar por los alrededores",
+            "Pensar",
+            "Descansar"
+        ],
+        "order": 8
+    },
+    {
+        "question": "Te halaga más que te digan que:",
+        "answers": [
+            "Tienes buen aspecto",
+            "Tienes una conversación interesante",
+            "Tienes un trato muy agradable"
+        ],
+        "order": 9
+    },
+    {
+        "question": "¿Cuál de estos ambientes te atrae más?",
+        "answers": [
+            "Uno con una hermosa vista al océano",
+            "Uno en el que se escuchen las olas del mar",
+            "Uno en el que se sienta un clima agradable"
+        ],
+        "order": 10
+    },
+    {
+        "question": "¿De qué manera se te facilita aprender algo?",
+        "answers": [
+            "Escribiéndolo varias veces",
+            "Repitiendo en voz alta",
+            "Relacionándolo con algo divertido"
+        ],
+        "order": 11
+    },
+    {
+        "question": "¿A qué evento prefieres asistir?",
+        "answers": [
+            "A una exposición de arte",
+            "A una conferencia",
+            "A una reunión social"
+        ],
+        "order": 12
+    },
+    {
+        "question": "Te formas una opinión de otras personas:",
+        "answers": [
+            "Por su aspecto",
+            "Por la sinceridad de su voz",
+            "Por la forma de estrecharte la mano"
+        ],
+        "order": 13
+    },
+    {
+        "question": "¿Cómo te consideras?",
+        "answers": [
+            "Atlético",
+            "Intelectual",
+            "Sociable"
+        ],
+        "order": 14
+    },
+    {
+        "question": "¿Qué tipo de películas te gustan más?",
+        "answers": [
+            "De acción",
+            "Clásicas",
+            "De amor"
+        ],
+        "order": 15
+    },
+    {
+        "question": "Prefieres mantener contacto con otra persona:",
+        "answers": [
+            "Por correo electrónico",
+            "Por teléfono",
+            "Tomando café juntos"
+        ],
+        "order": 16
+    },
+    {
+        "question": "¿Cuál de las siguientes frases te identifica más?",
+        "answers": [
+            "Es importante que mi auto esté limpio por fuera y por dentro",
+            "Percibo hasta el más ligero ruido que hace mi auto",
+            "Me gusta que mi auto se sienta bien al conducirlo"
+        ],
+        "order": 17
+    },
+    {
+        "question": "¿Cómo prefieres pasar el tiempo con tu pareja?",
+        "answers": [
+            "Mirando algo juntos",
+            "Conversando",
+            "Acariciándose"
+        ],
+        "order": 18
+    },
+    {
+        "question": "Si no encuentras las llaves en una bolsa:",
+        "answers": [
+            "La buscas mirando",
+            "Sacudes la bolsa para oír el ruido",
+            "Buscas al tacto"
+        ],
+        "order": 19
+    },
+    {
+        "question": "Cuando tratas de recordar algo, ¿cómo lo haces?",
+        "answers": [
+            "A través de imágenes",
+            "A través de sonidos",
+            "A través de emociones"
+        ],
+        "order": 20
+    },
+    {
+        "question": "Si tuvieras dinero, ¿qué harías?",
+        "answers": [
+            "Viajar y conocer el mundo",
+            "Adquirir un estudio de grabación",
+            "Comprar una casa"
+        ],
+        "order": 21
+    },
+    {
+        "question": "¿Qué frase te identifica?",
+        "answers": [
+            "Recuerdo el aspecto de alguien, pero no su nombre",
+            "Reconozco a las personas por su voz",
+            "No recuerdo el aspecto de la gente"
+        ],
+        "order": 22
+    },
+    {
+        "question": "Si tuvieras que quedarte en una isla desierta, preferirías llevar contigo:",
+        "answers": [
+            "Algunos buenos libros",
+            "Un radio portátil de alta frecuencia",
+            "Golosinas y comida enlatada"
+        ],
+        "order": 23
+    },
+    {
+        "question": "¿Cuál de estos entretenimientos prefieres?",
+        "answers": [
+            "Sacar fotografías",
+            "Tocar un instrumento musical",
+            "Hacer actividades manuales"
+        ],
+        "order": 24
+    }
 ]
