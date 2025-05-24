@@ -1,7 +1,10 @@
-import React from 'react'
+import React, {useState} from 'react'
 import "../../styles/home.css";
 
 const Register = () => {
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     return (
         <div>
 
@@ -11,7 +14,7 @@ const Register = () => {
                 <form className="form" action>
                     <div className="input-field">
                         <input required autoComplete="off" type="text" name="text" id="username" />
-                        <label htmlFor="username">Full Name</label>
+                        <label htmlFor="username">Username</label>
                     </div>
                     <div className="input-field">
                         <input required autoComplete="off" type="email" name="email" id="email" />
