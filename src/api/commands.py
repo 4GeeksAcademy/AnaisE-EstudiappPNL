@@ -1,6 +1,6 @@
 
 import click,json,os
-from api.models import db, User,Question
+from api.models import db, User
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 """
@@ -30,24 +30,4 @@ def setup_commands(app):
 
         print("All test users created")
 
-    @app.cli.command("insert-test-data")
-    def insert_test_data():
-        with open(os.path.join(__location__, 'json/questions.json')) as f:
-            questions = json.load(f)
-            print(questions)
-
-            print("Creating questions")
-            for question in questions:
-                new_question = Question(
-                    question = question["question"],
-                    option_v = question["answers"][0],   
-                    option_a = question["answers"][1],   
-                    option_k = question["answers"][2],  
-                    order = question["order"]
-                )
-            
-                db.session.add(new_question)
-                db.session.commit()
-        
-
-        print("All questions created")
+   

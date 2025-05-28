@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import request, jsonify, Blueprint
-from api.models import db, User, Question
+from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
@@ -116,65 +116,4 @@ def dashboard():
             "details": str(e)
             }),500
     
-@api.route('/load-vak-questions', methods=['POST'])
-@jwt_required() # ¡PROTEGE ESTE ENDPOINT! Solo administradores o usuarios autorizados deberían poder usarlo.
-def load_vak_questions():
-    # Solo permitir a administradores, si tienes un rol definido en tu User model
-    current_user_id = get_jwt_identity()
-    user = User.query.filter_by(id=int(current_user_id)).first()
-
-    # Ajusta esta lógica de autorización según tu modelo de 'rol' o si tienes un 'admin' flag.
-    # Por ejemplo, si tienes un campo 'rol' en tu modelo User:
-    if not user or user.rol != "admin":
-        return jsonify({"msg": "Acceso denegado: Se requiere rol de administrador"}), 403
-    
-    json_file_path = os.path.join(os.path.dirname(__file__), 'json', 'questions.json')
-    # Ajusta la ruta a tu 'questions.json' si no está en la raíz del proyecto.
-    # Si 'routes.py' está en 'api/', y 'questions.json' está en la raíz de 'src/',
-    # entonces la ruta relativa sería '../questions.json' o similar.
-
-    if not os.path.exists(json_file_path):
-        return jsonify({"msg": f"Error: El archivo {json_file_path} no fue encontrado."}), 500
-
-    try:
-        with open(json_file_path, 'r', encoding='utf-8') as f:
-            questions_data = json.load(f)
-
-        # Usar db.session aquí directamente ya que db.init_app(app) se hizo en main.py
-        # y db está accesible.
-
-        # Opcional: Limpiar preguntas existentes antes de cargar nuevas
-        # Esto eliminará todas las preguntas y sus respuestas relacionadas (debido a cascade)
-        # Descomenta CON PRECAUCIÓN. Ideal para desarrollo, peligroso en producción.
-        db.session.query(Question).delete() # Elimina todas las preguntas
-        db.session.commit()
-        print("Preguntas existentes eliminadas (opcional).")
-
-        for q_data in questions_data:
-            existing_question = db.session.execute(
-                db.select(Question).filter_by(order=q_data['order'])
-            ).scalar_one_or_none()
-
-            if existing_question:
-                # Actualizar pregunta existente
-                existing_question.question = q_data['question']
-                existing_question.option_v = q_data['answers'][0]
-                existing_question.option_a = q_data['answers'][1]
-                existing_question.option_k = q_data['answers'][2]
-            else:
-                # Crear nueva pregunta
-                new_question = Question(
-                    question=q_data['question'],
-                    option_v=q_data['answers'][0],
-                    option_a=q_data['answers'][1],
-                    option_k=q_data['answers'][2],
-                    order=q_data['order']
-                )
-                db.session.add(new_question)
-
-        db.session.commit()
-        return jsonify({"msg": "Preguntas del test VAK cargadas exitosamente desde JSON."}), 200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"msg": f"Error durante la carga de preguntas: {str(e)}"}), 500
+  

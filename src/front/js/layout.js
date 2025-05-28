@@ -12,9 +12,8 @@ import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import TestVAK from "./pages/TestVAK.jsx";
-import Results from "./pages/Results.jsx";
-
+import VAKTest from "./component/VAKTest/TestVAK.jsx";
+import VAKResults from "./component/VAKTest/VAKResults.jsx";
 
 //create your first component
 const Layout = () => {
@@ -33,8 +32,8 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
-                        <Route element={<TestVAK />} path="/testvak" />
-                        <Route element={<Results />} path="/results" />
+                        <Route element={<VAKTest />} path="/vaktest" />
+                        <Route element={<VAKResults />} path="/results" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
