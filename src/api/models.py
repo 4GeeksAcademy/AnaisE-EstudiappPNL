@@ -12,7 +12,7 @@ class User(db.Model):
     password_hash: Mapped[str] = mapped_column(String(300), nullable=False)
     username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     rol: Mapped[str] = mapped_column(String(10), nullable=True) 
-    test_result: Mapped[str] = mapped_column(String(1), nullable=True)
+    test_results: Mapped[str] = mapped_column(String(120), nullable=True)
         
 
     def set_password(self, password):

@@ -16,7 +16,6 @@ const Login = () => {
     setPassword(e.target.value);
   }
   
-  
   return (
   <div>
     <form classname="form">
