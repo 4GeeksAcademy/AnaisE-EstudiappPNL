@@ -14,6 +14,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import VAKTest from "./component/VAKTest/TestVAK.jsx";
 import VAKResults from "./component/VAKTest/VAKResults.jsx";
+import DashboardView from "./component/DashboardView.jsx";
 
 //create your first component
 const Layout = () => {
@@ -35,6 +36,7 @@ const Layout = () => {
                         <Route element={<VAKTest />} path="/vaktest" />
                         <Route element={<VAKResults />} path="/results" />
                         <Route element={<h1>Not found!</h1>} />
+                        <Route element={<DashboardView />} path="/dashboard" />
                     </Routes>
                     <Footer />
                 </ScrollToTop>

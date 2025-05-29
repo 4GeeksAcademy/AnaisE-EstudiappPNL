@@ -7,14 +7,16 @@ from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-from flask_jwt_extended import JWTManager # Asegúrate de tener esta importación si usas JWT
+from flask_jwt_extended import JWTManager 
+from flask_cors import CORS# Asegúrate de tener esta importación si usas JWT
 
 # from models import Person # Esta línea está comentada, no la toques
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/') # CORREGIDO: __file_
-app = Flask(__name__) # CORREGIDO: __name_
+app = Flask(__name__) 
+CORS(app)# CORREGIDO: __name_
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -41,6 +43,7 @@ setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
+
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
