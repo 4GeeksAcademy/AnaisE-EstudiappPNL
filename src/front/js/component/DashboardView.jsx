@@ -108,4 +108,36 @@ const DashboardView = () => {
     );
 };
 
-export default DashboardView;
+// src/views/PaymentPage.jsx (ejemplo)
+import React from 'react';
+import PayPalButton from '../component/PayPalButton.jsx'; // Ajusta la ruta
+
+const PaymentPage = () => {
+    const totalAmount = 50.00; // Ejemplo: el monto total a pagar
+
+    const handleSuccess = (details) => {
+        alert('¡Pago exitoso! ID de transacción: ' + details.capture_id);
+        // Redirigir al usuario a una página de confirmación de pedido
+        // navigate('/order-confirmation');
+    };
+
+    const handleError = (message) => {
+        alert('Error en el pago: ' + message);
+    };
+
+    return (
+        <div className="container mt-5">
+            <h2>Total a pagar: ${totalAmount.toFixed(2)} USD</h2>
+            <p>Por favor, complete su pago usando PayPal:</p>
+            <PayPalButton
+                amount={totalAmount}
+                onPaymentSuccess={handleSuccess}
+                onPaymentError={handleError}
+            />
+        </div>
+    );
+};
+
+export default PaymentPage;
+
+// src/component/PayPalButton.jsx (ejemplo)
