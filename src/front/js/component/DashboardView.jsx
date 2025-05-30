@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom"; // Importa useNavigate para redirección
+import { Link, useNavigate } from "react-router-dom"; // Importa useNavigate para redirección
 
 const DashboardView = () => {
     const { store, actions } = useContext(Context);
@@ -97,7 +97,9 @@ const DashboardView = () => {
                                     ¡Parece que aún no has completado tu test de PNL! Te recomendamos hacerlo para desbloquear todas las funciones.
                                 </div>
                             )}
-
+                    <Link to="/vaktest">
+						<button className="btn btn-primary">Test VAK</button>
+					</Link>
                         </div>
                     </div>
                 </div>

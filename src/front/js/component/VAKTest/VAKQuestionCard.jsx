@@ -16,16 +16,27 @@ const VAKQuestionCard = ({ question, onAnswer, currentQuestion, totalQuestions }
       <h2 className="text-2xl font-bold text-gray-800">{question.question}</h2>
       
       <div className="space-y-3">
-        { question.answers &&
-        question.answers.map((option, index) => (
-          <button
-            key={index}
-            onClick={() => onAnswer(index)}
+         <button
+          
+            onClick={() => onAnswer(0)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-left hover:bg-gray-50 hover:border-blue-300 transition-colors duration-200 transform hover:scale-[1.01]"
           >
-            {option}
+            {question.option_v}
           </button>
-        ))}
+         <button
+          
+            onClick={() => onAnswer(1)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-left hover:bg-gray-50 hover:border-blue-300 transition-colors duration-200 transform hover:scale-[1.01]"
+          >
+            {question.option_a}
+          </button>
+         <button
+          
+            onClick={() => onAnswer(2)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-left hover:bg-gray-50 hover:border-blue-300 transition-colors duration-200 transform hover:scale-[1.01]"
+          >
+            {question.option_k}
+          </button>
       </div>
     </div>
   );

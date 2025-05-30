@@ -15,9 +15,7 @@ export const Navbar = () => {
 					<Link to="/login">
 						<button className="btn btn-primary">Ingreso</button>
 					</Link> 
-					<Link to="/vaktest">
-						<button className="btn btn-primary">Test VAK</button>
-					</Link>
+					
 				</div>
 			</div>
 		</nav>

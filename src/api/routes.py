@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import request, jsonify, Blueprint
-from api.models import db, User # Asegúrate de que otros modelos (Question, TestResult, UserAnswer) también estén aquí si los usas en otras rutas
+from api.models import db, User, Question # Asegúrate de que otros modelos (Question, TestResult, UserAnswer) también estén aquí si los usas en otras rutas
 from api.utils import generate_sitemap, APIException # Asumo que APIException es la clase correcta de utils
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
@@ -115,3 +115,10 @@ def dashboard():
             "details": str(e)
             }), 500
 
+@api.route('/questions', methods=['GET'])
+def get_all_questions():
+    questions = Question.query.all()
+    if not questions:
+        return jsonify({"msg": "No hay preguntas disponibles"}), 404
+    serialized_questions = [question.serialize() for question in questions]
+    return jsonify(serialized_questions), 200

@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import VAKQuestionCard from './VAKQuestionCard.jsx';
 import VAKResults from './VAKResults.jsx';
-import vakQuestions from "../../../../api/json/questions.json";
+import Context from '../../store/appContext.js';
+//import vakQuestions from "../../../../api/json/questions.json";
       
 const VAKTest = () => {
+  //const {store, actions}  = useContext (Context)
+  const [vakQuestions, setVakQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState(null);
+
+  const getAllQuestions = async () => {
+    try {
+      const response = await fetch(process.env.BACKEND_URL+'/api/questions');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json(); 
+      
+      return data;
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+      return [];
+    }
+  }
   
   const handleAnswer = (optionIndex) => {
     const newAnswers = [...answers, optionIndex];
@@ -50,7 +68,21 @@ const VAKTest = () => {
     return <VAKResults results={results} onRetake={resetTest} />;
   }
   console.log(vakQuestions[currentQuestionIndex]);
-  
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const questions = await getAllQuestions();
+      setVakQuestions(questions);
+    };
+    
+    fetchQuestions();
+  }
+  , []);
+  if (vakQuestions.length === 0) {
+    return <div>Loading questions...</div>;
+  }
+  if (currentQuestionIndex >= vakQuestions.length) {
+    return <div>No more questions available.</div>;
+  }
   return (
     <VAKQuestionCard
       question={vakQuestions[currentQuestionIndex]}
