@@ -14,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     initial: "white"
                 }
             ],
-            backendUrl: "https://improved-meme-jv6q6xgr56wcpqwv-3001.app.github.dev", // ¡Asegúrate de que esta URL sea la correcta!
+            backendUrl:process.env.BACKEND_URL,
             token: null,
             user: null,  // Para almacenar la información del usuario logueado
             // --- NUEVOS ESTADOS PARA EL DASHBOARD ---
