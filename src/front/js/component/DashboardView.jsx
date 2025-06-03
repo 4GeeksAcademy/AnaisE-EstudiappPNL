@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom"; // Importa useNavigate para redirección
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import Swal from 'sweetalert2'
 
 const DashboardView = () => {
     const { store, actions } = useContext(Context);
@@ -71,6 +73,9 @@ const DashboardView = () => {
     const userData = store.dashboardData.user_data;
     const hasCompletedTest = store.dashboardData.has_completed_test; // Ahora este campo vendrá del backend
 
+   
+    
+
     return (
         <div className="container mt-5">
             <div className="row justify-content-center">
@@ -100,6 +105,21 @@ const DashboardView = () => {
                     <Link to="/vaktest">
 						<button className="btn btn-primary">Test VAK</button>
 					</Link>
+                    <span className="d-block">Regálame un café:</span>
+                    <PayPalScriptProvider options={{ clientId: process.env.PAYPAL_CLIENT_ID }}>
+           <PayPalButtons
+                onApprove={(data, actions) => {
+          return actions.order.capture().then((details) => {
+            const name = details.payer.name.given_name;
+           Swal.fire({
+  title: "Excelente!",
+  text: `Gracias por tu donación ${name}!`,
+  icon: "success"
+});
+          });
+        }}
+            />
+        </PayPalScriptProvider>
                         </div>
                     </div>
                 </div>
