@@ -85,29 +85,21 @@ def login_user():
 def dashboard():
     print("\n--- Entrando a la ruta /dashboard ---")
     try:
-        print("Decorador @jwt_required() procesado. Intentando obtener identidad del JWT...")
-        
         current_user_id = int(get_jwt_identity())
-        
-        print(f"ID de usuario obtenido del JWT: {current_user_id}")
-        print(f"Tipo de ID de usuario: {type(current_user_id)}")
-
         user = db.session.execute(
             db.select(User).filter_by(id=current_user_id)
         ).scalar_one_or_none()
 
         if user is None:
-            print(f"ERROR: Usuario con ID {current_user_id} no encontrado en la DB.")
             return jsonify({"msg": "Usuario no encontrado"}), 404
 
-        print(f"Usuario encontrado en DB: {user.username} (ID: {user.id})")
-        
-        user_has_completed_test = getattr(user, 'has_completed_test', False) 
+        # ✅ Revisar si el usuario tiene al menos un resultado de test
+        user_has_completed_test = len(user.test_results) > 0
 
         return jsonify({
             "msg": f"Bienvenido al dashboard, {user.username}!",
             "user_data": user.serialize(),
-            "has_completed_test": user_has_completed_test 
+            "has_completed_test": user_has_completed_test
         }), 200
 
     except Exception as e:
@@ -115,7 +107,8 @@ def dashboard():
         return jsonify({
             "msg": "Error interno del servidor al acceder al dashboard",
             "details": str(e)
-            }), 500
+        }), 500
+
 
 @api.route('/questions', methods=['GET'])
 def get_all_questions():

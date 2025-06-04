@@ -5,13 +5,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 db = SQLAlchemy()
 
 class User(db.Model):
-    __tablename__ = 'users' 
-
+    __tablename__ = 'users'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(300), nullable=False)
     username: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
-    rol: Mapped[str] = mapped_column(String(10), nullable=True) 
+    rol: Mapped[str] = mapped_column(String(10), nullable=True)
+    learning_channel: Mapped[str] = mapped_column(String(1), nullable=True)
+
     test_results: Mapped[list["TestResult"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
@@ -28,7 +29,6 @@ class User(db.Model):
 
     def serialize(self):
         serialized_test_results = []
-    
         if self.test_results:
             for result in self.test_results:
                 serialized_test_results.append({
@@ -42,12 +42,13 @@ class User(db.Model):
             "email": self.email,
             "username": self.username,
             "rol": self.rol,
-            "test_results": serialized_test_results 
+            "learning_channel": self.learning_channel,
+            "test_results": serialized_test_results
         }
 
     def __repr__(self):
-       
         return f'<User {self.username}>'
+
 
 class Question(db.Model): 
     __tablename__ = 'questions'
