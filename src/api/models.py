@@ -79,19 +79,17 @@ class Question(db.Model):
         return f'<Question {self.order}: {self.question}>'
     
 
-class UserAnswer(db.Model): 
+class UserAnswer(db.Model):
     __tablename__ = 'user_answers'
-
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     test_result_id: Mapped[int] = mapped_column(Integer, ForeignKey('test_results.id'), nullable=False)
     question_id: Mapped[int] = mapped_column(Integer, ForeignKey('questions.id'), nullable=False)
-    # Columna para guardar la opción seleccionada ('V', 'A' o 'K').
     selected_option: Mapped[str] = mapped_column(String(1), nullable=False)
+
     test_result: Mapped["TestResult"] = relationship(back_populates="user_answers")
     question: Mapped["Question"] = relationship(back_populates="user_answers")
 
     def serialize(self):
-       
         return {
             "id": self.id,
             "test_result_id": self.test_result_id,
@@ -106,11 +104,11 @@ class UserAnswer(db.Model):
 
 class TestResult(db.Model):
     __tablename__ = 'test_results'
-   
-    id: Mapped[int] = mapped_column(Integer, primary_key=True) # Especifica Integer
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False) # Especifica Integer
-    dominant_channel: Mapped[str] = mapped_column(String(1), nullable=False) # 'V', 'A' o 'K'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+    dominant_channel: Mapped[str] = mapped_column(String(1), nullable=False)  # 'V', 'A', 'K', o 'N'
     created_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+
     user: Mapped["User"] = relationship(back_populates="test_results")
     user_answers: Mapped[list["UserAnswer"]] = relationship(
         back_populates="test_result",
@@ -124,17 +122,15 @@ class TestResult(db.Model):
             for answer in self.user_answers:
                 serialized_answers.append({
                     "question_id": answer.question_id,
-                    "selected_option": answer.selected_option, # Esto devolverá 'V', 'A' o 'K'
+                    "selected_option": answer.selected_option,
                 })
-
         return {
             "id": self.id,
             "user_id": self.user_id,
             "dominant_channel": self.dominant_channel,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "user_answers": serialized_answers 
+            "user_answers": serialized_answers
         }
 
     def __repr__(self):
-       
         return f'<TestResult for User {self.user_id} - Channel: {self.dominant_channel}>'

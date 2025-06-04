@@ -25,7 +25,7 @@ const DashboardView = () => {
        
         // Dependencias: ejecutar cuando el token cambie
     }, [store.token, actions, navigate, store.dashboardData, store.testLoading]); 
-    // Añadí store.dashboardData y store.testLoading a las dependencias para evitar llamadas redundantes si los datos ya están ahí
+    [store.dashboardData, store.testLoading];
     // También actions y navigate, aunque actions suele ser estable, y navigate para evitar warnings de ESLint.
 
     // --- Manejo de estados de carga y error ---
@@ -128,4 +128,4 @@ const DashboardView = () => {
     );
 };
 
-export default DashboardView
+export default DashboardView;

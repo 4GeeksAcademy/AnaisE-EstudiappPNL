@@ -14,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     initial: "white"
                 }
             ],
-            backendUrl:process.env.BACKEND_URL,
+            backendUrl: process.env.BACKEND_URL,
             token: null,
             user: null,  // Para almacenar la información del usuario logueado
             // --- NUEVOS ESTADOS PARA EL DASHBOARD ---
@@ -31,12 +31,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             getMessage: async () => {
                 try {
-                    const store = getStore(); // Obtener el store para acceder a backendUrl
-                    // fetching data from the backend
+                    const store = getStore();
                     const resp = await fetch(`${store.backendUrl}/api/hello`); // Usar store.backendUrl
                     const data = await resp.json();
                     setStore({ message: data.message });
-                    // don't forget to return something, that is how the async resolves
+
                     return data;
                 } catch (error) {
                     console.log("Error loading message from backend", error);
@@ -46,14 +45,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                 //get the store
                 const store = getStore();
 
-                //we have to loop the entire demo array to look for the respective index
-                //and change its color
+
                 const demo = store.demo.map((elm, i) => {
                     if (i === index) elm.background = color;
                     return elm;
                 });
 
-                //reset the global store
+
                 setStore({ demo: demo });
             },
 
@@ -142,11 +140,11 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             }, // <-- CIERRA LA ACCIÓN syncTokenFromLocalStorage AQUÍ
 
-            // --- ACCIÓN getDashboardData (AHORA EN SU LUGAR CORRECTO) ---
+            // --- ACCIÓN getDashboardData 
             getDashboardData: async () => {
                 const store = getStore();
-                const actions = getActions(); // Necesitamos las acciones para llamar a logout
-                const token = store.token; // Usa store.token, no store.accessToken
+                const actions = getActions();
+                const token = store.token;
 
                 console.log("FLUX (getDashboardData): Solicitando datos del dashboard al backend...");
                 setStore({ dashboardData: null, dashboardError: null, testLoading: true }); // Resetear estados
@@ -187,8 +185,50 @@ const getState = ({ getStore, getActions, setStore }) => {
                     setStore({ dashboardError: error.message || "Error de red al cargar dashboard.", testLoading: false });
                     return { success: false, message: error.message };
                 }
+            },
+
+
+            submitTestAnswers: async (answers) => {
+            const store = getStore();
+            const token = store.token;
+
+            if (!token) {
+                console.error("FLUX (submitTestAnswers): No hay token. Usuario no autenticado.");
+                return { success: false, message: "No autorizado." };
             }
-        }, // <-- CIERRA EL OBJETO actions AQUÍ
+
+            try {
+                const response = await fetch(`${store.backendUrl}/api/submit-test-answers`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ answers: answers }), // Envía el diccionario de respuestas
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    console.error("FLUX (submitTestAnswers): Error del backend:", data.msg || data.message || data);
+                    setStore({ message: data.msg || data.message || "Error al enviar test." });
+                    return { success: false, message: data.msg || data.message || "Error al enviar test." };
+                }
+
+                console.log("FLUX (submitTestAnswers): Test enviado exitosamente:", data);
+                
+                return { success: true, data };
+
+            } catch (error) {
+                console.error("FLUX (submitTestAnswers): Error de red:", error);
+                setStore({ message: error.message || "Error de red al enviar test." });
+                return { success: false, message: error.message };
+            }
+        },
+        },
+        //REGISTRA LAS RESPUESTAS DADAS POR EL USUARIO
+        
+
     };
 };
 
