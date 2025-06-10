@@ -1,11 +1,13 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import Swal from 'sweetalert2';
+import { RecomendationModal } from "./RecomendationModal.jsx";
 
 const DashboardView = () => {
     const { store, actions } = useContext(Context);
+    const [showModal, setShowModal] = useState(false)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -95,8 +97,13 @@ const DashboardView = () => {
                                     <p><strong>Resultado del test:</strong></p>
                                     <ul>
                                         <li><strong>Canal de aprendizaje dominante:</strong> {getChannelLabel(latestTestResult.dominant_channel)}</li>
+                                        <li><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target={`#recomendations-modal`} onClick={()=> setShowModal(true)}>
+ Obtener Recomendaciones
+</button></li>
+
                                         <li><strong>Fecha del test:</strong> {new Date(latestTestResult.created_at).toLocaleDateString()}</li>
                                     </ul>
+                                    <RecomendationModal channel={getChannelLabel(latestTestResult.dominant_channel)} showModal={showModal} setShowModal={setShowModal}/>
                                 </div>
                             ) : (
                                 <p>Aún no hay resultados de test disponibles.</p>
