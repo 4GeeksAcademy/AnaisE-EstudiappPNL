@@ -8,7 +8,6 @@
 /* From Uiverse.io by andrew-demchenk0 */ 
 /* From Uiverse.io by Spacious74 */ 
 .container {
-  border: solid 1px #8d8d8d;
   padding: 20px;
   border-radius: 20px;
   background-color: #fff;
@@ -189,4 +188,28 @@
 
 .signup-link a {
   text-decoration: underline;
+}
+.logo {
+  width: 80px;
+  border-radius: 50%;
+}
+.boton {
+  margin-left: 20px;
+  background-color: #d6208a;
+}
+.navbar {
+  background-color: #ee8b61;
+}
+.link {
+text-decoration: none;
+color:#d6208a;
+}
+.boton-l { background-color: #d6208a;
+  
+}
+.body-register, .body-login {
+  padding: 40px;
+}
+body {
+  background-color: #e1ae8c;
 }

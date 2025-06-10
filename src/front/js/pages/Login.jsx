@@ -36,10 +36,10 @@ const Login = () => {
     };
 
     return (
-        <div>
-            <form className="form" onSubmit={handleSubmit}>
-                <p className="form-title">Sign in to your account</p>
-                
+        <div className='body-login text-center'>
+             <h2 className='my-5'>Inicia sesión en tu cuenta</h2>
+
+            <form className="form m-auto my-5" onSubmit={handleSubmit}>
                 <div className="input-container">
                     <input
                         placeholder="Enter email"
